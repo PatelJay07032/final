@@ -167,7 +167,7 @@
     </div>
 
     <div class="relative w-full">
-      <button id="prev-arrival" class="absolute left-2 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-black/60 hover:bg-black text-white flex items-center justify-center shadow transition duration-200" aria-label="Previous Products">
+      <button id="prev-arrival" class="hidden lg:flex absolute left-2 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-black/60 hover:bg-black text-white items-center justify-center shadow transition duration-200" aria-label="Previous Products">
         <svg width="9" height="14" viewBox="0 0 9 14" fill="none" class="w-2.5 h-4"><path d="M7.66666 1L1 7L7.66666 13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
 
@@ -234,7 +234,7 @@
         </div>
       </div>
 
-      <button id="next-arrival" class="absolute right-2 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-black/60 hover:bg-black text-white flex items-center justify-center shadow transition duration-200" aria-label="Next Products">
+      <button id="next-arrival" class="hidden lg:flex absolute right-2 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-black/60 hover:bg-black text-white items-center justify-center shadow transition duration-200" aria-label="Next Products">
         <svg width="9" height="14" viewBox="0 0 9 14" fill="none" class="w-2.5 h-4"><path d="M1 1L7.66667 7L1 13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
     </div>
@@ -390,7 +390,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       renderReviewLayout();
-      startAutoScrollEngine(); // Initializes the targeted device check loop
+      startAutoScrollEngine();
     });
 
     function addToCartPrompt(itemName) {
@@ -452,12 +452,9 @@
       }, 150);
     }
 
-    // CRITICAL UPDATE: Enforces strict separation of laptop manual vs mobile auto loop rules
     function startAutoScrollEngine() {
       clearInterval(autoScrollTimer);
-      
       if (window.innerWidth < 1024) {
-        // ONLY starts auto slider intervals on mobile/tablet screen ports
         autoScrollTimer = setInterval(() => {
           updateSlider(currentSlide + 1);
         }, 3000);
@@ -475,16 +472,17 @@
     window.addEventListener('resize', () => {
       const slide = slides[currentSlide];
       sliderEl.style.backgroundImage = `url('${(window.innerWidth < 1024 && slide.mobileImage) ? slide.mobileImage : slide.image}')`;
-      startAutoScrollEngine(); // Recalculates engine parameters instantly if window size breaks threshold
+      startAutoScrollEngine();
     });
 
+    // New Arrivals Navigation Mechanics (Enabled explicitly for desktop breakpoints)
     const arrivalsWrapper = document.getElementById('arrivals-wrapper');
     if (arrivalsWrapper) {
       document.getElementById('next-arrival').addEventListener('click', () => { arrivalsWrapper.scrollBy({ left: arrivalsWrapper.querySelector('.snap-start').offsetWidth + 24, behavior: 'smooth' }); });
       document.getElementById('prev-arrival').addEventListener('click', () => { arrivalsWrapper.scrollBy({ left: -(arrivalsWrapper.querySelector('.snap-start').offsetWidth + 24), behavior: 'smooth' }); });
     }
 
-    // --- CUSTOM REVIEWS CAROUSEL SYSTEM TRACK ---
+    // --- REVIEWS MECHANICS ---
     const reviewWrapper = document.getElementById('reviews-wrapper');
     const prevReviewBtn = document.getElementById('prev-review');
     const nextReviewBtn = document.getElementById('next-review');
